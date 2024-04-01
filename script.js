@@ -1,6 +1,5 @@
 // Constants
 
-const SQUARE_SIZE_AND_MARGIN = 108;
 const GAME_ROWS = 4;
 const GAME_COLUMNS = 4;
 
@@ -15,6 +14,8 @@ let score = 0;
 
 let best = 0;
 
+let square_size_percent = 0;
+
 let game_layout = [];
 
 const MOVEMENT = {
@@ -28,33 +29,49 @@ let current_status = STATUS.PLAYING;
 
 let tiles_to_delete = [];
 
+let start_touch_point = null;
+let end_touch_point = null;
+let delta_x_touch = 50;
+let delta_y_touch = 50;
+let delta_time_touch = 300;
+
 // Exec
 
 document.addEventListener("keydown", key_pressed);
+document.getElementById("restart_button").addEventListener("click", init);
+
+document.getElementById("game").addEventListener("touchstart", start_touch);
+document.getElementById("game").addEventListener("touchend", end_touch);
 
 load();
 
 // Functions
 
 function key_pressed(event) {
-    switch (event.key) {
-        case "ArrowDown":
+    switch (event.key.toLowerCase()) {
+        case "arrowdown":
             move(MOVEMENT.DOWN);
             break;
-        case "ArrowUp":
+        case "s":
+            move(MOVEMENT.DOWN);
+            break;
+        case "arrowup":
             move(MOVEMENT.UP);
             break;
-        case "ArrowLeft":
+        case "w":
+            move(MOVEMENT.UP);
+            break;
+        case "arrowleft":
             move(MOVEMENT.LEFT);
             break;
-        case "ArrowRight":
+        case "a":
+            move(MOVEMENT.LEFT);
+            break;
+        case "arrowright":
             move(MOVEMENT.RIGHT);
             break;
-        case "R":
-            init();
-            break;
-        case "r":
-            init();
+        case "d":
+            move(MOVEMENT.RIGHT);
             break;
         default:
             return;
@@ -74,6 +91,8 @@ function load() {
 
 function init() {
     current_status = STATUS.PLAYING;
+
+    square_size_percent = 100.0 / GAME_ROWS;
 
     set_content("tile_container", "");
     game_layout = [];
@@ -276,8 +295,8 @@ function can_move() {
 
 function translate_tile(r, c, new_r, new_c) {
     let div = document.getElementsByClassName(`tile_${r}_${c}`)[0];
-    div.style.top = `${SQUARE_SIZE_AND_MARGIN * new_r}px`;
-    div.style.left = `${SQUARE_SIZE_AND_MARGIN * new_c}px`;
+    div.style.top = `${square_size_percent * new_r}%`;
+    div.style.left = `${square_size_percent * new_c}%`;
     div.classList.remove(`tile_${r}_${c}`);
     div.classList.add(`tile_${new_r}_${new_c}`);
 
@@ -300,8 +319,8 @@ function generate_tile(number, position = null) {
 
     const div = document.createElement("div");
     div.textContent = number;
-    div.style.top = `${SQUARE_SIZE_AND_MARGIN * row}px`;
-    div.style.left = `${SQUARE_SIZE_AND_MARGIN * column}px`;
+    div.style.top = `${square_size_percent * row}%`;
+    div.style.left = `${square_size_percent * column}%`;
     div.classList.add("tile", `number_${number}`, `tile_${row}_${column}`);
     append_child("tile_container", div);
 
@@ -311,6 +330,44 @@ function generate_tile(number, position = null) {
 function show_message(message) {
     set_content("game_message", message);
     add_class_by_id("game_message", "visible");
+}
+
+function start_touch(e) {
+    e.preventDefault();
+    start_touch_point = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: new Date() };
+}
+
+function end_touch(e) {
+    e.preventDefault();   
+    end_touch_point = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY, time: new Date() };
+
+    difference_x = end_touch_point.x - start_touch_point.x;
+    difference_y = end_touch_point.y - start_touch_point.y;
+    difference_time = end_touch_point.time - start_touch_point.time;
+
+    if (difference_time > delta_time_touch) {
+        return;
+    }
+
+    if (difference_x < -delta_x_touch && Math.abs(difference_y) < delta_y_touch) {
+        move(MOVEMENT.LEFT);
+        return;
+    }
+
+    if (difference_y < -delta_y_touch && Math.abs(difference_x) < delta_x_touch) {
+        move(MOVEMENT.UP);
+        return;
+    }
+
+    if (difference_x > delta_x_touch && Math.abs(difference_y) < delta_y_touch) {
+        move(MOVEMENT.RIGHT);
+        return;
+    }
+
+    if (difference_y > delta_y_touch && Math.abs(difference_x) < delta_x_touch) {
+        move(MOVEMENT.DOWN);
+        return;
+    }
 }
 
 // Utils

@@ -1,6 +1,4 @@
 :root {
-    --square-size: 96px;
-    --square-size-and-margin: 108px;
     --game-rows: 4;
     --game-columns: 4;
 }
@@ -12,7 +10,7 @@
 
 html {
     font-weight: 800;
-    font-size: 1.3rem;
+    height: 100%;
 }
 
 /* BODY */
@@ -22,12 +20,11 @@ body {
     background-color: rgb(252, 247, 241);
     display: flex;
     flex-direction: column;
-    width: 100%;
-    min-height: 100vh;
     justify-content: center;
     align-items: center;
-    min-width: min-content;
-    gap: 10px;
+    width: 100%;
+    height: 100%;
+    min-width: 375px;
     padding: 20px;
 }
 
@@ -37,6 +34,8 @@ body {
     justify-content: center;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
+    max-width: 450px;
 }
 
 #header {
@@ -48,18 +47,18 @@ body {
 
 #best,
 #score {
-    padding: 10px;
+    padding: 0.5rem;
     background-color: rgb(187, 173, 160);
     border-radius: 5px;
-    width: 80px;
     text-align: center;
+    width: 24%;
 
-    &>div:nth-child(1) {
+    &>span:nth-child(1) {
         color: rgb(238, 228, 218);
-        font-size: 0.8em;
+        display: block;
     }
 
-    &>div:nth-child(2) {
+    &>span:nth-child(2) {
         color: white;
     }
 }
@@ -67,7 +66,7 @@ body {
 #title {
     flex-grow: 1;
     text-align: center;
-    font-size: 2.4em;
+    font-size: 2.4rem;
 
     &>span:nth-child(1) {
         color: #3c3a32;
@@ -88,6 +87,7 @@ body {
 
 #game {
     position: relative;
+    width: 100%;
 }
 
 #game_background {
@@ -100,11 +100,13 @@ body {
     background-color: rgb(187, 175, 158);
     position: absolute;
     z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 #game_background>div {
-    width: var(--square-size);
-    height: var(--square-size);
     background-color: #ccc0b3;
     border-radius: 6px;
 }
@@ -115,7 +117,7 @@ body {
     color: #3c3a32;
     width: 100%;
     height: 100%;
-    font-size: 1.6em;
+    font-size: 1.6rem;
     font-weight: 600;
     background-color: #ffffff8c;
     display: none;
@@ -141,96 +143,97 @@ body {
 
 #tile_container {
     position: relative;
-    width: calc(var(--square-size-and-margin) * var(--game-columns));
-    height: calc(var(--square-size-and-margin) * var(--game-rows));
+    aspect-ratio: 1/1;
     margin: 6px;
+    width: calc(100% - 12px);
 }
 
 #tile_container>div {
-    width: var(--square-size);
-    height: var(--square-size);
+    width: calc((100% / var(--game-columns)) - 12px);
+    height: calc((100% / var(--game-rows)) - 12px);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 6px;
     position: absolute;
-    animation: show-tile-anim 0.2s ease;
+    animation: show-tile-anim 0.1s ease;
     margin: 6px;
     transition-property: top, left;
     transition-duration: 0.1s, 0.1s;
+    user-select: none;
 
     &.number_2 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #eee4da;
         color: #776e65;
         z-index: 2;
     }
 
     &.number_4 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #ede0c8;
         color: #776e65;
         z-index: 3;
     }
 
     &.number_8 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #f2b179;
         color: #f9f6f2;
         z-index: 4;
     }
 
     &.number_16 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #f59563;
         color: #f9f6f2;
         z-index: 5;
     }
 
     &.number_32 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #f67c5f;
         color: #f9f6f2;
         z-index: 6;
     }
 
     &.number_64 {
-        font-size: 2.8em;
+        font-size: 2.8rem;
         background-color: #f65e3b;
         color: #f9f6f2;
         z-index: 7;
     }
 
     &.number_128 {
-        font-size: 2.4em;
+        font-size: 2.4rem;
         background-color: #edcf72;
         color: #f9f6f2;
         z-index: 8;
     }
 
     &.number_256 {
-        font-size: 2.4em;
+        font-size: 2.4rem;
         background-color: #edcc61;
         color: #f9f6f2;
         z-index: 9;
     }
 
     &.number_512 {
-        font-size: 2.4em;
+        font-size: 2.4rem;
         background-color: #edc850;
         color: #f9f6f2;
         z-index: 10;
     }
 
     &.number_1024 {
-        font-size: 2em;
+        font-size: 2rem;
         background-color: #edc53f;
         color: #f9f6f2;
         z-index: 11;
     }
 
     &.number_2048 {
-        font-size: 2em;
+        font-size: 2rem;
         background-color: #edc22e;
         color: #f9f6f2;
         z-index: 12;
@@ -248,7 +251,24 @@ body {
 }
 
 #instructions {
+    width: 100%;
     color: #776e65;
+    text-align: center;
+
+    &>span {
+        display: block;
+    }
+
+    &>button {
+        font-size: 1rem;
+        margin-top: 0.8rem;
+        background-color: rgb(187, 175, 158);
+        color: white;
+        padding: 0.6em;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+    }
 }
 
 /* ////////////// */
